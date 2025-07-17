@@ -1,0 +1,20 @@
+# roles/webserver/templates/apache.conf.j2
+<VirtualHost *:{{ apache_listen_port }}>
+    ServerAdmin webmaster@localhost
+    ServerName {{ wordpress_site_url | regex_replace('^(http|https)://', '') }}
+    DocumentRoot {{ wordpress_install_dir }}
+
+    <Directory {{ wordpress_install_dir }}>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    <FilesMatch \.php$>
+        SetHandler "proxy:unix:/run/php/php{{ php_version }}-fpm.sock|fcgi://localhost"
+    </FilesMatch>
+
+</VirtualHost>

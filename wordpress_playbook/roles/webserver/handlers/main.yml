@@ -1,0 +1,14 @@
+# roles/webserver/handlers/main.yml
+- name: restart apache
+  ansible.builtin.service:
+    name: apache2
+    state: restarted
+  listen: "restart webserver"
+  when: webserver_type == 'apache'
+
+- name: restart php-fpm
+  ansible.builtin.service:
+    name: "php{{ php_version }}-fpm"
+    state: restarted
+  listen: "restart php-fpm"
+  when: webserver_type == 'apache' and ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
